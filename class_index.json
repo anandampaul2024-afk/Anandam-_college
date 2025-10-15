@@ -1,0 +1,20 @@
+{
+  "class_to_idx": {
+    "Corner_Kick": 0,
+    "Free_Kick": 1,
+    "Penalty_kick": 2,
+    "Red_Card": 3,
+    "Yellow_Card": 4,
+    "substitute": 5,
+    "tackle": 6
+  },
+  "idx_to_class": {
+    "0": "Corner_Kick",
+    "1": "Free_Kick",
+    "2": "Penalty_kick",
+    "3": "Red_Card",
+    "4": "Yellow_Card",
+    "5": "substitute",
+    "6": "tackle"
+  }
+}
