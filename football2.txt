@@ -1,0 +1,196 @@
+frontend2
+
+
+import streamlit as st
+from PIL import Image
+import torch
+from torchvision import transforms
+from modelcnn1 import SimpleCNN
+from llmhelper import generate_explanation
+import json
+import os
+
+st.title("Football Image Analysis")
+
+# -------------------------------
+# 1. Upload image
+# -------------------------------
+uploaded_file = st.file_uploader("Choose a football image...", type=["jpg", "png", "jpeg"])
+
+# -------------------------------
+# 2. Load class labels dynamically from dataset
+# -------------------------------
+json_file_path = "match_images_fulldataset/annotations/instances_default.json"
+
+with open(json_file_path, 'r') as f:
+    data = json.load(f)
+categories = sorted([cat['name'] for cat in data['categories']])
+label_to_index = {name: idx for idx, name in enumerate(categories)}
+index_to_label = {idx: name for name, idx in label_to_index.items()}
+
+# -------------------------------
+# 3. Load CNN model
+# -------------------------------
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+num_classes = len(categories)
+model = SimpleCNN(num_classes=num_classes)
+model.load_state_dict(torch.load("cnn_model.pth", map_location=device))  # load trained weights
+model.to(device)
+model.eval()
+
+# -------------------------------
+# 4. Prediction & Explanation
+# -------------------------------
+pred_class = None  # default
+
+if uploaded_file is not None:
+    # Display uploaded image
+    image = Image.open(uploaded_file).convert("RGB")
+    st.image(image, caption="Uploaded Image", use_column_width=True)
+
+    # Transform image
+    transform = transforms.Compose([
+        transforms.Resize((128,128)),
+        transforms.ToTensor()
+    ])
+    img_tensor = transform(image).unsqueeze(0).to(device)
+
+    # CNN prediction
+    with torch.no_grad():
+        outputs = model(img_tensor)
+        _, pred_idx = torch.max(outputs, 1)
+        pred_class = index_to_label[pred_idx.item()]
+
+    st.write(f"**CNN Prediction:** {pred_class}")
+
+# -------------------------------
+# 5. Manual input for LLM
+# -------------------------------
+manual_input = st.text_input("Or enter a football situation manually:")
+
+# -------------------------------
+# 6. Generate Explanation
+# -------------------------------
+if st.button("Generate Explanation"):
+    if manual_input.strip():
+        # User typed their own input
+        prompt = f"Provide a detailed football analysis for the following scenario: {manual_input}"
+    elif pred_class:
+        # Use CNN prediction
+        prompt = f"Provide a detailed football analysis for the following scenario: {pred_class} detected in the image."
+    else:
+        prompt = None
+
+    if prompt:
+        explanation = generate_explanation(prompt)
+        st.subheader("LLM Explanation")
+        st.write(explanation)
+    else:
+        st.warning("Please upload an image or enter text to get an explanation.")
+
+
+
+
+
+frontend1
+
+# app.py
+import streamlit as st
+from PIL import Image
+import torch
+from torchvision import transforms
+from modelcnn1 import SimpleCNN
+from llmhelper import generate_explanation
+import json
+import os
+
+st.title("Football Image Analysis")
+
+# -------------------------------
+# 1. Upload image
+# -------------------------------
+uploaded_file = st.file_uploader("Choose a football image...", type=["jpg", "png", "jpeg"])
+
+# -------------------------------
+# 2. Load class labels dynamically from dataset
+# -------------------------------
+# Path to your COCO JSON
+json_file_path = "match_images_fulldataset/annotations/instances_default.json"
+
+with open(json_file_path, 'r') as f:
+    data = json.load(f)
+categories = sorted([cat['name'] for cat in data['categories']])
+label_to_index = {name: idx for idx, name in enumerate(categories)}
+index_to_label = {idx: name for name, idx in label_to_index.items()}
+
+# -------------------------------
+# 3. Load CNN model
+# -------------------------------
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+num_classes = len(categories)
+model = SimpleCNN(num_classes=num_classes)
+model.load_state_dict(torch.load("cnn_model.pth", map_location=device))  # load your trained weights
+model.to(device)
+model.eval()
+
+# -------------------------------
+# 4. Predict & Explain
+# -------------------------------
+if uploaded_file is not None:
+    # Display image
+    image = Image.open(uploaded_file).convert("RGB")
+    st.image(image, caption="Uploaded Image", use_column_width=True)
+
+    # Transform image
+    transform = transforms.Compose([
+        transforms.Resize((128,128)),
+        transforms.ToTensor()
+    ])
+    img_tensor = transform(image).unsqueeze(0).to(device)
+
+    # CNN prediction
+    with torch.no_grad():
+        outputs = model(img_tensor)
+        _, pred_idx = torch.max(outputs, 1)
+        pred_class = index_to_label[pred_idx.item()]
+
+    st.write(f"**CNN Prediction:** {pred_class}")
+
+    # LLM explanation
+    prompt = f"Provide a detailed football analysis for the following scenario: {pred_class} detected in the image."
+    explanation = generate_explanation(prompt)
+    st.subheader("LLM Explanation")
+    st.write(explanation)
+
+
+
+llmhelper
+
+
+
+
+# llmhelper.py
+import google.generativeai as genai
+
+# Configure your API key
+genai.configure(api_key="AIzaSyD3f2oZ3m26ATVMupHWRfzxlvmY0ZZ7lG8")
+
+# Choose a stable model
+MODEL_NAME = "models/gemini-2.5-flash"
+
+model = genai.GenerativeModel(MODEL_NAME)
+
+def generate_explanation(prompt):
+    """
+    Generate a detailed football analysis for the given prompt.
+    """
+    try:
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        return f"Error generating explanation: {str(e)}"
+
+
+
+
+AIzaSyD3f2oZ3m26ATVMupHWRfzxlvmY0ZZ7lG8

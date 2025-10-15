@@ -1,0 +1,184 @@
+
+
+# trainloop1.py
+import os
+import json
+from PIL import Image
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+import torchvision.transforms as transforms
+from modelcnn1 import SimpleCNN  # make sure modelcnn1.py is in the same folder
+from tqdm import tqdm
+
+# ------------------------------
+# 1. COCO JSON parser (only existing images, limit for testing)
+# ------------------------------
+def parse_coco_json(json_file_path, images_folder, max_images=None):
+    with open(json_file_path, 'r') as f:
+        data = json.load(f)
+
+    categories = {cat['id']: cat['name'] for cat in data['categories']}
+    images = {img['id']: img['file_name'] for img in data['images']}
+
+    existing_files = set(os.listdir(images_folder))
+    image_label_list = []
+    for ann in data['annotations']:
+        image_id = ann['image_id']
+        category_id = ann['category_id']
+        file_name = images[image_id]
+        if file_name not in existing_files:
+            continue  # skip missing images
+        label_name = categories[category_id]
+        image_path = os.path.join(images_folder, file_name)
+        image_label_list.append((image_path, label_name))
+        if max_images and len(image_label_list) >= max_images:
+            break
+
+    return image_label_list
+
+# ------------------------------
+# 2. Dataset class
+# ------------------------------
+class CustomDataset(Dataset):
+    def __init__(self, data_list, label_to_index, transform=None):
+        self.data_list = data_list
+        self.transform = transform
+        self.label_to_index = label_to_index
+
+    def __len__(self):
+        return len(self.data_list)
+
+    def __getitem__(self, idx):
+        img_path, label_name = self.data_list[idx]
+        image = Image.open(img_path).convert("RGB")
+        if self.transform:
+            image = self.transform(image)
+        label = self.label_to_index[label_name]
+        return image, label
+
+# ------------------------------
+# 3. Paths & Parameters
+# ------------------------------
+images_folder = "match_images_fulldataset/images"
+json_file_path = "match_images_fulldataset/annotations/instances_default.json"
+batch_size = 8
+epochs = 10
+lr = 0.001
+img_size = 128  # resize images
+
+# ------------------------------
+# 4. Prepare dataset
+# ------------------------------
+data_list = parse_coco_json(json_file_path, images_folder)
+
+# Map labels to integers
+unique_labels = sorted(list(set([lbl for _, lbl in data_list])))
+label_to_index = {lbl: idx for idx, lbl in enumerate(unique_labels)}
+num_classes = len(unique_labels)
+
+# Transforms
+transform = transforms.Compose([
+    transforms.Resize((img_size, img_size)),
+    transforms.ToTensor()
+])
+
+dataset = CustomDataset(data_list, label_to_index, transform=transform)
+dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+print(f"Total images used for training: {len(dataset)}")
+
+# ------------------------------
+# 5. Model, loss, optimizer
+# ------------------------------
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = SimpleCNN(num_classes=num_classes).to(device)
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=lr)
+
+# ------------------------------
+# 6. Training loop with progress bar
+# ------------------------------
+for epoch in range(1, epochs + 1):
+    running_loss = 0.0
+    correct = 0
+    total = 0
+    loop = tqdm(dataloader, desc=f"Epoch {epoch}/{epochs}", unit="batch")
+
+    for images, labels in loop:
+        images = images.to(device)
+        labels = labels.to(device)
+
+        optimizer.zero_grad()
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+        running_loss += loss.item()
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+        avg_loss = running_loss / (len(loop) or 1)
+        acc = 100 * correct / total
+        loop.set_postfix(loss=f"{avg_loss:.4f}", acc=f"{acc:.2f}%")
+
+    print(f"Epoch [{epoch}/{epochs}] - Loss: {avg_loss:.4f} - Accuracy: {acc:.2f}% "
+          f"({correct}/{total} correct)")
+
+# ------------------------------
+# 7. Save the model weights
+# ------------------------------
+torch.save(model.state_dict(), "simplecnn_weights.pth")
+print("✅ Training finished! Model weights saved as simplecnn_weights.pth")
+
+
+
+
+
+
+
+
+
+
+
+# cnn_model.py
+
+import torch
+import torch.nn as nn
+
+class SimpleCNN(nn.Module):
+    def __init__(self, num_classes=3, in_channels=3):
+        super().__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(in_channels, 32, 3, stride=1, padding=1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2),  # 112 -> 56
+
+            nn.Conv2d(32, 64, 3, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2),  # 56 -> 28
+
+            nn.Conv2d(64, 128, 3, padding=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(inplace=True),
+            nn.AdaptiveAvgPool2d(1),
+        )
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(128, 128),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.4),
+            nn.Linear(128, num_classes)
+        )
+
+    def forward(self, x):
+        # x: [B, C, H, W]
+        f = self.features(x)
+        out = self.classifier(f)
+        return out
+

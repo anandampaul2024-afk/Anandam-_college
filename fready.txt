@@ -1,0 +1,304 @@
+import torch
+import torch.nn as nn
+import torchvision.models as models
+
+# -----------------------------
+# Patch Embedding for ViT (from scratch)
+# -----------------------------
+class PatchEmbedding(nn.Module):
+    def __init__(self, img_size=7, patch_size=1, in_channels=2048, embed_dim=256):
+        super().__init__()
+        assert img_size % patch_size == 0, "img_size must be divisible by patch_size"
+        self.num_patches = (img_size // patch_size) ** 2
+        self.proj = nn.Conv2d(in_channels, embed_dim, kernel_size=patch_size, stride=patch_size)
+
+        self.cls_token = nn.Parameter(torch.zeros(1, 1, embed_dim))
+        self.pos_embed = nn.Parameter(torch.zeros(1, self.num_patches + 1, embed_dim))
+        nn.init.trunc_normal_(self.cls_token, std=0.02)
+        nn.init.trunc_normal_(self.pos_embed, std=0.02)
+
+    def forward(self, x):
+        B = x.size(0)
+        x = self.proj(x).flatten(2).transpose(1, 2)  # (B, N, D)
+        cls_tokens = self.cls_token.expand(B, -1, -1)
+        x = torch.cat((cls_tokens, x), dim=1)
+        x = x + self.pos_embed
+        return x
+
+# -----------------------------
+# Transformer Encoder Block
+# -----------------------------
+class TransformerEncoder(nn.Module):
+    def __init__(self, embed_dim=256, num_heads=8, mlp_ratio=4.0, dropout=0.1):
+        super().__init__()
+        self.norm1 = nn.LayerNorm(embed_dim)
+        self.attn = nn.MultiheadAttention(embed_dim, num_heads, dropout=dropout, batch_first=True)
+        self.norm2 = nn.LayerNorm(embed_dim)
+        self.mlp = nn.Sequential(
+            nn.Linear(embed_dim, int(embed_dim * mlp_ratio)),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(int(embed_dim * mlp_ratio), embed_dim),
+            nn.Dropout(dropout)
+        )
+
+    def forward(self, x):
+        x = x + self.attn(self.norm1(x), self.norm1(x), self.norm1(x))[0]
+        x = x + self.mlp(self.norm2(x))
+        return x
+
+# -----------------------------
+# Hybrid ResNet50 + ViT
+# -----------------------------
+class HybridResNetViT(nn.Module):
+    def __init__(self, num_classes=7, img_size=224, vit_embed_dim=256, vit_heads=8, vit_depth=4, dropout=0.1):
+        super().__init__()
+        # CNN Backbone (ResNet50)
+        resnet = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1)
+        self.cnn = nn.Sequential(*list(resnet.children())[:-2])  # keep conv feature map
+        self.cnn_features = 2048
+        feature_map_size = img_size // 32  # 224 -> 7
+        
+        # ViT from scratch
+        self.patch_embed = PatchEmbedding(img_size=feature_map_size, patch_size=1,
+                                          in_channels=self.cnn_features, embed_dim=vit_embed_dim)
+        self.transformer = nn.Sequential(
+            *[TransformerEncoder(vit_embed_dim, vit_heads, dropout=dropout) for _ in range(vit_depth)]
+        )
+        # Classifier
+        self.fc = nn.Sequential(
+            nn.LayerNorm(vit_embed_dim),
+            nn.Dropout(dropout),
+            nn.Linear(vit_embed_dim, num_classes)
+        )
+
+    def forward(self, x):
+        x = self.cnn(x)           # (B, 2048, 7, 7)
+        x = self.patch_embed(x)   # (B, N+1, embed_dim)
+        x = self.transformer(x)
+        cls_token = x[:, 0]       # class token
+        out = self.fc(cls_token)
+        return out
+
+
+
+
+import os, json, time, random, numpy as np, warnings
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader, Subset, WeightedRandomSampler
+import torchvision.transforms as T
+from torchvision.datasets import ImageFolder
+from tqdm import tqdm
+from PIL import Image, ImageFile
+from sklearn.metrics import f1_score, confusion_matrix, classification_report
+import seaborn as sns
+import matplotlib.pyplot as plt
+#from model_resnet_vit import HybridResNetViT  # Uncomment your model import
+
+# -----------------------------
+# Config
+# -----------------------------
+DATA_ROOT = "/kaggle/input/soccer-event-classification-image-data-cnn-and-llm/images"
+WEIGHTS_DIR = "weights"
+os.makedirs(WEIGHTS_DIR, exist_ok=True)
+
+IMG_SIZE = 224
+BATCH_SIZE = 32
+EPOCHS = 20
+LR = 3e-4
+VAL_SPLIT = 0.2
+SEED = 42
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+warnings.filterwarnings("ignore", category=UserWarning)
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+# -----------------------------
+# Seed
+# -----------------------------
+def set_seed(seed=SEED):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.benchmark = True
+
+set_seed(SEED)
+
+# -----------------------------
+# Safe loader
+# -----------------------------
+def safe_image_loader(path):
+    with open(path, "rb") as f:
+        img = Image.open(f)
+        try: img.load()
+        except: pass
+        try:
+            if (img.mode=="P" and "transparency" in img.info) or img.mode in ("RGBA","LA"):
+                img_rgba = img.convert("RGBA")
+                bg = Image.new("RGB", img_rgba.size, (255,255,255))
+                bg.paste(img_rgba, mask=img_rgba.split()[3])
+                return bg
+            else: return img.convert("RGB")
+        except:
+            return img.convert("RGB")
+
+# -----------------------------
+# Transforms
+# -----------------------------
+train_tf = T.Compose([
+    T.RandomResizedCrop(IMG_SIZE, scale=(0.8,1.0)),
+    T.RandomHorizontalFlip(),
+    T.RandomRotation(20),
+    T.ColorJitter(0.4,0.4,0.4,0.05),
+    T.ToTensor(),
+    T.Normalize([0.5,0.5,0.5],[0.5,0.5,0.5])
+])
+val_tf = T.Compose([
+    T.Resize((IMG_SIZE, IMG_SIZE)),
+    T.ToTensor(),
+    T.Normalize([0.5,0.5,0.5],[0.5,0.5,0.5])
+])
+
+# -----------------------------
+# Dataset
+# -----------------------------
+base_ds = ImageFolder(root=DATA_ROOT, transform=train_tf, loader=safe_image_loader)
+class_to_idx = base_ds.class_to_idx
+idx_to_class = {v:k for k,v in class_to_idx.items()}
+num_classes = len(idx_to_class)
+with open(os.path.join(WEIGHTS_DIR,"class_index.json"), "w") as f:
+    json.dump({"class_to_idx": class_to_idx,"idx_to_class": idx_to_class}, f, indent=2)
+
+targets = np.array([label for _, label in base_ds.samples])
+train_indices, val_indices = [], []
+for cls_id in range(num_classes):
+    cls_idx = np.where(targets==cls_id)[0]
+    np.random.shuffle(cls_idx)
+    split = int(len(cls_idx)*(1-VAL_SPLIT))
+    train_indices.extend(cls_idx[:split])
+    val_indices.extend(cls_idx[split:])
+
+train_ds = Subset(base_ds, train_indices)
+val_base = ImageFolder(root=DATA_ROOT, transform=val_tf, loader=safe_image_loader)
+val_ds = Subset(val_base, val_indices)
+
+# Weighted sampler
+class_counts = np.bincount([targets[i] for i in train_indices])
+class_weights = 1.0 / (class_counts + 1e-6)
+sample_weights = [class_weights[targets[i]] for i in train_indices]
+train_sampler = WeightedRandomSampler(sample_weights, len(sample_weights), replacement=True)
+
+# DataLoaders
+num_workers = min(4, os.cpu_count() or 0)
+train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, sampler=train_sampler,
+                          num_workers=num_workers, pin_memory=True)
+val_loader = DataLoader(val_ds, batch_size=BATCH_SIZE, shuffle=False,
+                        num_workers=num_workers, pin_memory=True)
+
+# -----------------------------
+# Model, optimizer, loss
+# -----------------------------
+model = HybridResNetViT(num_classes=num_classes).to(DEVICE)  # Replace with your model
+criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
+optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=1e-4)
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCHS)
+scaler = torch.amp.GradScaler()
+
+# -----------------------------
+# Training loop with full metrics
+# -----------------------------
+best_f1 = 0.0
+start = time.time()
+
+for epoch in range(1, EPOCHS+1):
+    print(f"\n=== Epoch {epoch}/{EPOCHS} ===")
+    
+    # Train
+    model.train()
+    running_loss, total, correct = 0.0, 0, 0
+    pbar = tqdm(train_loader, desc="Train", ncols=100)
+    for images, labels in pbar:
+        images, labels = images.to(DEVICE), labels.to(DEVICE)
+        optimizer.zero_grad()
+        with torch.amp.autocast(device_type='cuda'):
+            logits = model(images)
+            loss = criterion(logits, labels)
+        scaler.scale(loss).backward()
+        scaler.unscale_(optimizer)
+        torch.nn.utils.clip_grad_norm_(model.parameters(),5.0)
+        scaler.step(optimizer)
+        scaler.update()
+
+        batch_size = images.size(0)
+        running_loss += loss.item()*batch_size
+        preds = logits.argmax(dim=1)
+        correct += (preds==labels).sum().item()
+        total += batch_size
+        pbar.set_postfix({"loss": f"{loss.item():.4f}", "acc": f"{correct/total:.4f}"})
+    
+    train_loss = running_loss/total
+    train_acc = correct/total
+
+    # Validate
+    model.eval()
+    running_loss, total, correct = 0.0, 0, 0
+    y_true_all, y_pred_all = [], []
+    pbar = tqdm(val_loader, desc="Val  ", ncols=100)
+    for images, labels in pbar:
+        images, labels = images.to(DEVICE), labels.to(DEVICE)
+        with torch.amp.autocast(device_type='cuda'), torch.no_grad():
+            logits = model(images)
+            loss = criterion(logits, labels)
+        batch_size = images.size(0)
+        running_loss += loss.item()*batch_size
+        total += batch_size
+        preds = logits.argmax(dim=1)
+        correct += (preds==labels).sum().item()
+        y_true_all.extend(labels.cpu().numpy())
+        y_pred_all.extend(preds.cpu().numpy())
+        pbar.set_postfix({"loss": f"{running_loss/total:.4f}", "acc": f"{correct/total:.4f}"})
+
+    val_loss = running_loss/total
+    val_acc = correct/total
+    f1_weighted = f1_score(y_true_all, y_pred_all, average='weighted')
+    f1_macro = f1_score(y_true_all, y_pred_all, average='macro')
+    
+    # Confusion Matrix
+    cm = confusion_matrix(y_true_all, y_pred_all)
+    print("\nConfusion Matrix:")
+    print(cm)
+
+    # Plot confusion matrix
+    plt.figure(figsize=(8,6))
+    sns.heatmap(cm, annot=True, fmt='d', xticklabels=[idx_to_class[i] for i in range(num_classes)],
+                yticklabels=[idx_to_class[i] for i in range(num_classes)], cmap="Blues")
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    plt.title(f"Epoch {epoch} Confusion Matrix")
+    plt.show()
+
+    # Per-class accuracy
+    class_acc = cm.diagonal() / cm.sum(axis=1)
+    for i, acc in enumerate(class_acc):
+        print(f"Class {idx_to_class[i]} Accuracy: {acc:.4f}")
+
+    # Classification Report
+    print("\nClassification Report:")
+    print(classification_report(y_true_all, y_pred_all, target_names=[idx_to_class[i] for i in range(num_classes)]))
+
+    scheduler.step()
+    print(f"Train Loss={train_loss:.4f} Acc={train_acc:.4f} | Val Loss={val_loss:.4f} Acc={val_acc:.4f} F1(w)={f1_weighted:.4f} F1(m)={f1_macro:.4f}")
+
+    # Save
+    last_path = os.path.join(WEIGHTS_DIR, "last_hybrid_resnet_vit.pth")
+    torch.save(model.state_dict(), last_path)
+    if f1_weighted > best_f1:
+        best_f1 = f1_weighted
+        best_path = os.path.join(WEIGHTS_DIR, "best_hybrid_resnet_vit.pth")
+        torch.save(model.state_dict(), best_path)
+        print(f"✅ New best F1(w)={best_f1:.4f} saved to {best_path}")
+
+elapsed = time.time()-start
+print(f"\nTraining complete in {elapsed/60:.1f} min. Best F1(w)={best_f1:.4f}")

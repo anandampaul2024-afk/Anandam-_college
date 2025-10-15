@@ -1,0 +1,759 @@
+=== Epoch 1/20 ===
+Train: 100%|█████████████████████████████| 155/155 [50:43<00:00, 19.63s/it, loss=0.6659, acc=0.7031]
+Val  : 100%|███████████████████████████████| 39/39 [06:22<00:00,  9.81s/it, loss=0.8918, acc=0.8116]
+
+Confusion Matrix:
+[[140   8   7   5   2  12   2]
+ [ 12 101  13   1   2  14   7]
+ [ 27  30 109   3   0  13   1]
+ [  1   0   1 141   1   1   0]
+ [  0   9   0  15 143  10   4]
+ [  0   2   0   5   0 193   1]
+ [  0  19   3   0   0   2 177]]
+Class Corner_Kick Accuracy: 0.7955
+Class Free_Kick Accuracy: 0.6733
+Class Penalty_kick Accuracy: 0.5956
+Class Red_Card Accuracy: 0.9724
+Class Yellow_Card Accuracy: 0.7901
+Class substitute Accuracy: 0.9602
+Class tackle Accuracy: 0.8806
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.78      0.80      0.79       176
+   Free_Kick       0.60      0.67      0.63       150
+Penalty_kick       0.82      0.60      0.69       183
+    Red_Card       0.83      0.97      0.90       145
+ Yellow_Card       0.97      0.79      0.87       181
+  substitute       0.79      0.96      0.87       201
+      tackle       0.92      0.88      0.90       201
+
+    accuracy                           0.81      1237
+   macro avg       0.81      0.81      0.81      1237
+weighted avg       0.82      0.81      0.81      1237
+
+Train Loss=1.1067 Acc=0.7031 | Val Loss=0.8918 Acc=0.8116 F1(w)=0.8099 F1(m)=0.8058
+✅ New best F1(w)=0.8099 saved to weights\best_hybrid_resnet_vit.pth
+
+=== Epoch 2/20 ===
+Train: 100%|█████████████████████████████| 155/155 [28:59<00:00, 11.22s/it, loss=1.5004, acc=0.8202]
+Val  : 100%|███████████████████████████████| 39/39 [03:19<00:00,  5.13s/it, loss=0.9721, acc=0.7704]
+
+Confusion Matrix:
+[[107  34  26   5   4   0   0]
+ [  7 111  19   6   2   0   5]
+ [ 14  44 118   2   0   0   5]
+ [  0   0   1 141   3   0   0]
+ [  0   3   0  18 160   0   0]
+ [  0   8   8   7   5 171   2]
+ [  3  27   1  21   4   0 145]]
+Class Corner_Kick Accuracy: 0.6080
+Class Free_Kick Accuracy: 0.7400
+Class Penalty_kick Accuracy: 0.6448
+Class Red_Card Accuracy: 0.9724
+Class Yellow_Card Accuracy: 0.8840
+Class substitute Accuracy: 0.8507
+Class tackle Accuracy: 0.7214
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.82      0.61      0.70       176
+   Free_Kick       0.49      0.74      0.59       150
+Penalty_kick       0.68      0.64      0.66       183
+    Red_Card       0.70      0.97      0.82       145
+ Yellow_Card       0.90      0.88      0.89       181
+  substitute       1.00      0.85      0.92       201
+      tackle       0.92      0.72      0.81       201
+
+    accuracy                           0.77      1237
+   macro avg       0.79      0.77      0.77      1237
+weighted avg       0.80      0.77      0.78      1237
+
+Train Loss=0.8675 Acc=0.8202 | Val Loss=0.9721 Acc=0.7704 F1(w)=0.7759 F1(m)=0.7696
+
+=== Epoch 3/20 ===
+Train: 100%|█████████████████████████████| 155/155 [32:20<00:00, 12.52s/it, loss=0.5826, acc=0.8251]
+Val  : 100%|███████████████████████████████| 39/39 [02:30<00:00,  3.85s/it, loss=0.8305, acc=0.8351]
+
+Confusion Matrix:
+[[155  13   1   3   1   3   0]
+ [ 21 114   5   2   3   3   2]
+ [ 30  53  91   0   3   1   5]
+ [  1   0   0 139   5   0   0]
+ [  1   2   0   4 171   3   0]
+ [  0   1   0   1   1 198   0]
+ [  4  26   0   1   5   0 165]]
+Class Corner_Kick Accuracy: 0.8807
+Class Free_Kick Accuracy: 0.7600
+Class Penalty_kick Accuracy: 0.4973
+Class Red_Card Accuracy: 0.9586
+Class Yellow_Card Accuracy: 0.9448
+Class substitute Accuracy: 0.9851
+Class tackle Accuracy: 0.8209
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.73      0.88      0.80       176
+   Free_Kick       0.55      0.76      0.64       150
+Penalty_kick       0.94      0.50      0.65       183
+    Red_Card       0.93      0.96      0.94       145
+ Yellow_Card       0.90      0.94      0.92       181
+  substitute       0.95      0.99      0.97       201
+      tackle       0.96      0.82      0.88       201
+
+    accuracy                           0.84      1237
+   macro avg       0.85      0.84      0.83      1237
+weighted avg       0.86      0.84      0.83      1237
+
+Train Loss=0.8382 Acc=0.8251 | Val Loss=0.8305 Acc=0.8351 F1(w)=0.8336 F1(m)=0.8291
+✅ New best F1(w)=0.8336 saved to weights\best_hybrid_resnet_vit.pth
+
+=== Epoch 4/20 ===
+Train: 100%|█████████████████████████████| 155/155 [26:06<00:00, 10.11s/it, loss=1.9855, acc=0.8640]
+Val  : 100%|███████████████████████████████| 39/39 [02:38<00:00,  4.06s/it, loss=0.8211, acc=0.8286]
+
+Confusion Matrix:
+[[122  19  25   1   3   3   3]
+ [  6 108  26   0   1   7   2]
+ [  7  26 147   0   1   0   2]
+ [  0   1   0 133   8   3   0]
+ [  0   8   0   4 161   7   1]
+ [  0   1   0   0   1 198   1]
+ [  1  42   2   0   0   0 156]]
+Class Corner_Kick Accuracy: 0.6932
+Class Free_Kick Accuracy: 0.7200
+Class Penalty_kick Accuracy: 0.8033
+Class Red_Card Accuracy: 0.9172
+Class Yellow_Card Accuracy: 0.8895
+Class substitute Accuracy: 0.9851
+Class tackle Accuracy: 0.7761
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.90      0.69      0.78       176
+   Free_Kick       0.53      0.72      0.61       150
+Penalty_kick       0.73      0.80      0.77       183
+    Red_Card       0.96      0.92      0.94       145
+ Yellow_Card       0.92      0.89      0.90       181
+  substitute       0.91      0.99      0.95       201
+      tackle       0.95      0.78      0.85       201
+
+    accuracy                           0.83      1237
+   macro avg       0.84      0.83      0.83      1237
+weighted avg       0.85      0.83      0.83      1237
+
+Train Loss=0.7605 Acc=0.8640 | Val Loss=0.8211 Acc=0.8286 F1(w)=0.8332 F1(m)=0.8286
+
+=== Epoch 5/20 ===
+Train: 100%|█████████████████████████████| 155/155 [26:08<00:00, 10.12s/it, loss=0.5097, acc=0.8729]
+Val  : 100%|███████████████████████████████| 39/39 [02:38<00:00,  4.06s/it, loss=0.7540, acc=0.8634]
+
+Confusion Matrix:
+[[150   9   6   2   3   4   2]
+ [ 15 102  20   0   4   4   5]
+ [ 20  29 127   1   3   0   3]
+ [  0   0   0 142   3   0   0]
+ [  0   2   0   8 169   2   0]
+ [  0   2   0   2   1 196   0]
+ [  0  16   3   0   0   0 182]]
+Class Corner_Kick Accuracy: 0.8523
+Class Free_Kick Accuracy: 0.6800
+Class Penalty_kick Accuracy: 0.6940
+Class Red_Card Accuracy: 0.9793
+Class Yellow_Card Accuracy: 0.9337
+Class substitute Accuracy: 0.9751
+Class tackle Accuracy: 0.9055
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.81      0.85      0.83       176
+   Free_Kick       0.64      0.68      0.66       150
+Penalty_kick       0.81      0.69      0.75       183
+    Red_Card       0.92      0.98      0.95       145
+ Yellow_Card       0.92      0.93      0.93       181
+  substitute       0.95      0.98      0.96       201
+      tackle       0.95      0.91      0.93       201
+
+    accuracy                           0.86      1237
+   macro avg       0.86      0.86      0.86      1237
+weighted avg       0.86      0.86      0.86      1237
+
+Train Loss=0.7460 Acc=0.8729 | Val Loss=0.7540 Acc=0.8634 F1(w)=0.8627 F1(m)=0.8576
+✅ New best F1(w)=0.8627 saved to weights\best_hybrid_resnet_vit.pth
+
+=== Epoch 6/20 ===
+Train: 100%|█████████████████████████████| 155/155 [28:02<00:00, 10.86s/it, loss=0.6987, acc=0.8936]
+Val  : 100%|███████████████████████████████| 39/39 [02:27<00:00,  3.78s/it, loss=0.8523, acc=0.8270]
+
+Confusion Matrix:
+[[159   7   4   0   4   1   1]
+ [ 27 108  13   0   1   0   1]
+ [ 15  23 142   1   1   1   0]
+ [  0   1   0 141   3   0   0]
+ [  4   5   0   6 162   3   1]
+ [  3   3   0   2   0 192   1]
+ [ 14  67   1   0   0   0 119]]
+Class Corner_Kick Accuracy: 0.9034
+Class Free_Kick Accuracy: 0.7200
+Class Penalty_kick Accuracy: 0.7760
+Class Red_Card Accuracy: 0.9724
+Class Yellow_Card Accuracy: 0.8950
+Class substitute Accuracy: 0.9552
+Class tackle Accuracy: 0.5920
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.72      0.90      0.80       176
+   Free_Kick       0.50      0.72      0.59       150
+Penalty_kick       0.89      0.78      0.83       183
+    Red_Card       0.94      0.97      0.96       145
+ Yellow_Card       0.95      0.90      0.92       181
+  substitute       0.97      0.96      0.96       201
+      tackle       0.97      0.59      0.73       201
+
+    accuracy                           0.83      1237
+   macro avg       0.85      0.83      0.83      1237
+weighted avg       0.86      0.83      0.83      1237
+
+Train Loss=0.6999 Acc=0.8936 | Val Loss=0.8523 Acc=0.8270 F1(w)=0.8310 F1(m)=0.8280
+
+=== Epoch 7/20 ===
+Train: 100%|█████████████████████████████| 155/155 [26:44<00:00, 10.35s/it, loss=0.4666, acc=0.9041]
+Val  : 100%|███████████████████████████████| 39/39 [02:30<00:00,  3.86s/it, loss=0.7204, acc=0.8892]
+
+Confusion Matrix:
+[[147   8  11   1   2   5   2]
+ [ 11 100  31   0   2   1   5]
+ [  8  16 154   1   1   0   3]
+ [  0   0   0 140   5   0   0]
+ [  0   3   0   5 169   4   0]
+ [  0   0   0   0   3 197   1]
+ [  1   4   3   0   0   0 193]]
+Class Corner_Kick Accuracy: 0.8352
+Class Free_Kick Accuracy: 0.6667
+Class Penalty_kick Accuracy: 0.8415
+Class Red_Card Accuracy: 0.9655
+Class Yellow_Card Accuracy: 0.9337
+Class substitute Accuracy: 0.9801
+Class tackle Accuracy: 0.9602
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.88      0.84      0.86       176
+   Free_Kick       0.76      0.67      0.71       150
+Penalty_kick       0.77      0.84      0.81       183
+    Red_Card       0.95      0.97      0.96       145
+ Yellow_Card       0.93      0.93      0.93       181
+  substitute       0.95      0.98      0.97       201
+      tackle       0.95      0.96      0.95       201
+
+    accuracy                           0.89      1237
+   macro avg       0.89      0.88      0.88      1237
+weighted avg       0.89      0.89      0.89      1237
+
+Train Loss=0.6737 Acc=0.9041 | Val Loss=0.7204 Acc=0.8892 F1(w)=0.8880 F1(m)=0.8834
+✅ New best F1(w)=0.8880 saved to weights\best_hybrid_resnet_vit.pth
+
+=== Epoch 8/20 ===
+Train: 100%|█████████████████████████████| 155/155 [30:00<00:00, 11.62s/it, loss=0.6936, acc=0.9078]
+Val  : 100%|███████████████████████████████| 39/39 [04:36<00:00,  7.10s/it, loss=0.7283, acc=0.8787]
+
+Confusion Matrix:
+[[141  14  16   0   0   1   4]
+ [  7 103  32   0   0   2   6]
+ [  5  17 154   0   0   3   4]
+ [  0   0   0 140   5   0   0]
+ [  0   7   2   5 165   2   0]
+ [  0   3   0   1   0 194   3]
+ [  0   3   8   0   0   0 190]]
+Class Corner_Kick Accuracy: 0.8011
+Class Free_Kick Accuracy: 0.6867
+Class Penalty_kick Accuracy: 0.8415
+Class Red_Card Accuracy: 0.9655
+Class Yellow_Card Accuracy: 0.9116
+Class substitute Accuracy: 0.9652
+Class tackle Accuracy: 0.9453
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.92      0.80      0.86       176
+   Free_Kick       0.70      0.69      0.69       150
+Penalty_kick       0.73      0.84      0.78       183
+    Red_Card       0.96      0.97      0.96       145
+ Yellow_Card       0.97      0.91      0.94       181
+  substitute       0.96      0.97      0.96       201
+      tackle       0.92      0.95      0.93       201
+
+    accuracy                           0.88      1237
+   macro avg       0.88      0.87      0.88      1237
+weighted avg       0.88      0.88      0.88      1237
+
+Train Loss=0.6695 Acc=0.9078 | Val Loss=0.7283 Acc=0.8787 F1(w)=0.8796 F1(m)=0.8753
+
+=== Epoch 9/20 ===
+Train: 100%|█████████████████████████████| 155/155 [30:31<00:00, 11.82s/it, loss=0.8264, acc=0.9114]
+Val  : 100%|███████████████████████████████| 39/39 [02:54<00:00,  4.47s/it, loss=0.6956, acc=0.8973]
+
+Confusion Matrix:
+[[150  12   7   2   3   1   1]
+ [ 14 113  13   1   1   1   7]
+ [ 12  20 144   1   1   2   3]
+ [  0   0   1 139   5   0   0]
+ [  1   0   1   8 169   2   0]
+ [  0   0   0   0   1 199   1]
+ [  1   1   0   1   2   0 196]]
+Class Corner_Kick Accuracy: 0.8523
+Class Free_Kick Accuracy: 0.7533
+Class Penalty_kick Accuracy: 0.7869
+Class Red_Card Accuracy: 0.9586
+Class Yellow_Card Accuracy: 0.9337
+Class substitute Accuracy: 0.9900
+Class tackle Accuracy: 0.9751
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.84      0.85      0.85       176
+   Free_Kick       0.77      0.75      0.76       150
+Penalty_kick       0.87      0.79      0.83       183
+    Red_Card       0.91      0.96      0.94       145
+ Yellow_Card       0.93      0.93      0.93       181
+  substitute       0.97      0.99      0.98       201
+      tackle       0.94      0.98      0.96       201
+
+    accuracy                           0.90      1237
+   macro avg       0.89      0.89      0.89      1237
+weighted avg       0.90      0.90      0.90      1237
+
+Train Loss=0.6545 Acc=0.9114 | Val Loss=0.6956 Acc=0.8973 F1(w)=0.8962 F1(m)=0.8917
+✅ New best F1(w)=0.8962 saved to weights\best_hybrid_resnet_vit.pth
+
+=== Epoch 10/20 ===
+Train: 100%|█████████████████████████████| 155/155 [29:52<00:00, 11.57s/it, loss=0.4512, acc=0.9335]
+Val  : 100%|███████████████████████████████| 39/39 [03:43<00:00,  5.72s/it, loss=0.7014, acc=0.8981]
+
+Confusion Matrix:
+[[149  19   4   0   2   0   2]
+ [ 11 119  15   0   0   1   4]
+ [  7  26 143   0   0   2   5]
+ [  1   0   0 141   3   0   0]
+ [  0   2   2   7 167   3   0]
+ [  1   1   0   0   3 195   1]
+ [  0   2   1   1   0   0 197]]
+Class Corner_Kick Accuracy: 0.8466
+Class Free_Kick Accuracy: 0.7933
+Class Penalty_kick Accuracy: 0.7814
+Class Red_Card Accuracy: 0.9724
+Class Yellow_Card Accuracy: 0.9227
+Class substitute Accuracy: 0.9701
+Class tackle Accuracy: 0.9801
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.88      0.85      0.86       176
+   Free_Kick       0.70      0.79      0.75       150
+Penalty_kick       0.87      0.78      0.82       183
+    Red_Card       0.95      0.97      0.96       145
+ Yellow_Card       0.95      0.92      0.94       181
+  substitute       0.97      0.97      0.97       201
+      tackle       0.94      0.98      0.96       201
+
+    accuracy                           0.90      1237
+   macro avg       0.90      0.90      0.89      1237
+weighted avg       0.90      0.90      0.90      1237
+
+Train Loss=0.6093 Acc=0.9335 | Val Loss=0.7014 Acc=0.8981 F1(w)=0.8985 F1(m)=0.8943
+✅ New best F1(w)=0.8985 saved to weights\best_hybrid_resnet_vit.pth
+
+=== Epoch 11/20 ===
+Train: 100%|█████████████████████████████| 155/155 [28:25<00:00, 11.00s/it, loss=0.8337, acc=0.9368]
+Val  : 100%|███████████████████████████████| 39/39 [04:27<00:00,  6.86s/it, loss=0.6775, acc=0.9022]
+
+Confusion Matrix:
+[[160   6   7   0   2   1   0]
+ [ 14 110  22   1   1   0   2]
+ [  8  17 154   0   2   2   0]
+ [  0   0   0 141   4   0   0]
+ [  0   0   0   6 174   1   0]
+ [  1   2   0   1   1 196   0]
+ [  1  11   6   1   0   1 181]]
+Class Corner_Kick Accuracy: 0.9091
+Class Free_Kick Accuracy: 0.7333
+Class Penalty_kick Accuracy: 0.8415
+Class Red_Card Accuracy: 0.9724
+Class Yellow_Card Accuracy: 0.9613
+Class substitute Accuracy: 0.9751
+Class tackle Accuracy: 0.9005
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.87      0.91      0.89       176
+   Free_Kick       0.75      0.73      0.74       150
+Penalty_kick       0.81      0.84      0.83       183
+    Red_Card       0.94      0.97      0.96       145
+ Yellow_Card       0.95      0.96      0.95       181
+  substitute       0.98      0.98      0.98       201
+      tackle       0.99      0.90      0.94       201
+
+    accuracy                           0.90      1237
+   macro avg       0.90      0.90      0.90      1237
+weighted avg       0.90      0.90      0.90      1237
+
+Train Loss=0.6005 Acc=0.9368 | Val Loss=0.6775 Acc=0.9022 F1(w)=0.9023 F1(m)=0.8982
+✅ New best F1(w)=0.9023 saved to weights\best_hybrid_resnet_vit.pth
+
+=== Epoch 12/20 ===
+Train: 100%|█████████████████████████████| 155/155 [26:15<00:00, 10.16s/it, loss=0.4893, acc=0.9483]
+Val  : 100%|███████████████████████████████| 39/39 [02:35<00:00,  4.00s/it, loss=0.6994, acc=0.9022]
+
+Confusion Matrix:
+[[157  13   3   0   2   0   1]
+ [ 14 118  12   0   2   0   4]
+ [  6  26 147   1   0   1   2]
+ [  0   1   0 142   2   0   0]
+ [  0   3   0  10 166   1   1]
+ [  0   3   0   2   1 195   0]
+ [  2   8   0   0   0   0 191]]
+Class Corner_Kick Accuracy: 0.8920
+Class Free_Kick Accuracy: 0.7867
+Class Penalty_kick Accuracy: 0.8033
+Class Red_Card Accuracy: 0.9793
+Class Yellow_Card Accuracy: 0.9171
+Class substitute Accuracy: 0.9701
+Class tackle Accuracy: 0.9502
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.88      0.89      0.88       176
+   Free_Kick       0.69      0.79      0.73       150
+Penalty_kick       0.91      0.80      0.85       183
+    Red_Card       0.92      0.98      0.95       145
+ Yellow_Card       0.96      0.92      0.94       181
+  substitute       0.99      0.97      0.98       201
+      tackle       0.96      0.95      0.95       201
+
+    accuracy                           0.90      1237
+   macro avg       0.90      0.90      0.90      1237
+weighted avg       0.91      0.90      0.90      1237
+
+Train Loss=0.5758 Acc=0.9483 | Val Loss=0.6994 Acc=0.9022 F1(w)=0.9034 F1(m)=0.8984
+✅ New best F1(w)=0.9034 saved to weights\best_hybrid_resnet_vit.pth
+
+=== Epoch 13/20 ===
+Train: 100%|█████████████████████████████| 155/155 [31:57<00:00, 12.37s/it, loss=0.4948, acc=0.9493]
+Val  : 100%|███████████████████████████████| 39/39 [05:35<00:00,  8.61s/it, loss=0.6898, acc=0.9046]
+
+Confusion Matrix:
+[[151  16   4   2   2   1   0]
+ [ 14 114  16   1   1   0   4]
+ [  6  23 151   0   1   1   1]
+ [  0   0   0 142   3   0   0]
+ [  0   0   1   6 172   2   0]
+ [  0   0   1   0   3 197   0]
+ [  1   3   4   0   0   1 192]]
+Class Corner_Kick Accuracy: 0.8580
+Class Free_Kick Accuracy: 0.7600
+Class Penalty_kick Accuracy: 0.8251
+Class Red_Card Accuracy: 0.9793
+Class Yellow_Card Accuracy: 0.9503
+Class substitute Accuracy: 0.9801
+Class tackle Accuracy: 0.9552
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.88      0.86      0.87       176
+   Free_Kick       0.73      0.76      0.75       150
+Penalty_kick       0.85      0.83      0.84       183
+    Red_Card       0.94      0.98      0.96       145
+ Yellow_Card       0.95      0.95      0.95       181
+  substitute       0.98      0.98      0.98       201
+      tackle       0.97      0.96      0.96       201
+
+    accuracy                           0.90      1237
+   macro avg       0.90      0.90      0.90      1237
+weighted avg       0.91      0.90      0.90      1237
+
+Train Loss=0.5705 Acc=0.9493 | Val Loss=0.6898 Acc=0.9046 F1(w)=0.9047 F1(m)=0.9002
+✅ New best F1(w)=0.9047 saved to weights\best_hybrid_resnet_vit.pth
+
+=== Epoch 14/20 ===
+Train: 100%|█████████████████████████████| 155/155 [37:56<00:00, 14.69s/it, loss=0.4643, acc=0.9615]
+Val  : 100%|███████████████████████████████| 39/39 [05:05<00:00,  7.83s/it, loss=0.6866, acc=0.8998]
+
+Confusion Matrix:
+[[154  11   5   4   1   1   0]
+ [ 14 112  17   2   1   0   4]
+ [  8  25 145   2   0   1   2]
+ [  0   0   0 143   2   0   0]
+ [  1   0   2   9 168   1   0]
+ [  0   0   1   0   1 199   0]
+ [  1   3   5   0   0   0 192]]
+Class Corner_Kick Accuracy: 0.8750
+Class Free_Kick Accuracy: 0.7467
+Class Penalty_kick Accuracy: 0.7923
+Class Red_Card Accuracy: 0.9862
+Class Yellow_Card Accuracy: 0.9282
+Class substitute Accuracy: 0.9900
+Class tackle Accuracy: 0.9552
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.87      0.88      0.87       176
+   Free_Kick       0.74      0.75      0.74       150
+Penalty_kick       0.83      0.79      0.81       183
+    Red_Card       0.89      0.99      0.94       145
+ Yellow_Card       0.97      0.93      0.95       181
+  substitute       0.99      0.99      0.99       201
+      tackle       0.97      0.96      0.96       201
+
+    accuracy                           0.90      1237
+   macro avg       0.89      0.90      0.89      1237
+weighted avg       0.90      0.90      0.90      1237
+
+Train Loss=0.5408 Acc=0.9615 | Val Loss=0.6866 Acc=0.8998 F1(w)=0.8995 F1(m)=0.8945
+
+=== Epoch 15/20 ===
+Train: 100%|█████████████████████████████| 155/155 [32:09<00:00, 12.45s/it, loss=0.4621, acc=0.9700]
+Val  : 100%|███████████████████████████████| 39/39 [04:13<00:00,  6.51s/it, loss=0.6786, acc=0.9054]
+
+Confusion Matrix:
+[[157   9   4   3   0   1   2]
+ [ 13 115  18   1   0   0   3]
+ [  5  21 150   2   0   1   4]
+ [  0   0   0 142   3   0   0]
+ [  0   1   3   9 167   1   0]
+ [  0   2   1   1   0 197   0]
+ [  0   3   6   0   0   0 192]]
+Class Corner_Kick Accuracy: 0.8920
+Class Free_Kick Accuracy: 0.7667
+Class Penalty_kick Accuracy: 0.8197
+Class Red_Card Accuracy: 0.9793
+Class Yellow_Card Accuracy: 0.9227
+Class substitute Accuracy: 0.9801
+Class tackle Accuracy: 0.9552
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.90      0.89      0.89       176
+   Free_Kick       0.76      0.77      0.76       150
+Penalty_kick       0.82      0.82      0.82       183
+    Red_Card       0.90      0.98      0.94       145
+ Yellow_Card       0.98      0.92      0.95       181
+  substitute       0.98      0.98      0.98       201
+      tackle       0.96      0.96      0.96       201
+
+    accuracy                           0.91      1237
+   macro avg       0.90      0.90      0.90      1237
+weighted avg       0.91      0.91      0.91      1237
+
+Train Loss=0.5214 Acc=0.9700 | Val Loss=0.6786 Acc=0.9054 F1(w)=0.9055 F1(m)=0.9010
+✅ New best F1(w)=0.9055 saved to weights\best_hybrid_resnet_vit.pth
+
+=== Epoch 16/20 ===
+Train: 100%|█████████████████████████████| 155/155 [30:00<00:00, 11.62s/it, loss=0.9117, acc=0.9676]
+Val  : 100%|███████████████████████████████| 39/39 [04:30<00:00,  6.95s/it, loss=0.6866, acc=0.8981]
+
+Confusion Matrix:
+[[145  17   6   4   1   1   2]
+ [ 14 115  16   2   0   0   3]
+ [  2  21 154   2   0   1   3]
+ [  1   0   0 140   4   0   0]
+ [  0   0   2   9 167   3   0]
+ [  0   0   1   0   1 199   0]
+ [  0   3   7   0   0   0 191]]
+Class Corner_Kick Accuracy: 0.8239
+Class Free_Kick Accuracy: 0.7667
+Class Penalty_kick Accuracy: 0.8415
+Class Red_Card Accuracy: 0.9655
+Class Yellow_Card Accuracy: 0.9227
+Class substitute Accuracy: 0.9900
+Class tackle Accuracy: 0.9502
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.90      0.82      0.86       176
+   Free_Kick       0.74      0.77      0.75       150
+Penalty_kick       0.83      0.84      0.83       183
+    Red_Card       0.89      0.97      0.93       145
+ Yellow_Card       0.97      0.92      0.94       181
+  substitute       0.98      0.99      0.98       201
+      tackle       0.96      0.95      0.95       201
+
+    accuracy                           0.90      1237
+   macro avg       0.89      0.89      0.89      1237
+weighted avg       0.90      0.90      0.90      1237
+
+Train Loss=0.5333 Acc=0.9676 | Val Loss=0.6866 Acc=0.8981 F1(w)=0.8983 F1(m)=0.8932
+
+=== Epoch 17/20 ===
+Train: 100%|█████████████████████████████| 155/155 [37:39<00:00, 14.58s/it, loss=0.9152, acc=0.9771]
+Val  : 100%|███████████████████████████████| 39/39 [02:42<00:00,  4.17s/it, loss=0.6923, acc=0.9030]
+
+Confusion Matrix:
+[[159   8   4   1   3   1   0]
+ [ 15 115  15   1   2   0   2]
+ [  7  20 151   2   1   1   1]
+ [  1   0   0 140   4   0   0]
+ [  0   0   2   8 169   2   0]
+ [  0   0   1   0   1 199   0]
+ [  1   8   8   0   0   0 184]]
+Class Corner_Kick Accuracy: 0.9034
+Class Free_Kick Accuracy: 0.7667
+Class Penalty_kick Accuracy: 0.8251
+Class Red_Card Accuracy: 0.9655
+Class Yellow_Card Accuracy: 0.9337
+Class substitute Accuracy: 0.9900
+Class tackle Accuracy: 0.9154
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.87      0.90      0.89       176
+   Free_Kick       0.76      0.77      0.76       150
+Penalty_kick       0.83      0.83      0.83       183
+    Red_Card       0.92      0.97      0.94       145
+ Yellow_Card       0.94      0.93      0.94       181
+  substitute       0.98      0.99      0.99       201
+      tackle       0.98      0.92      0.95       201
+
+    accuracy                           0.90      1237
+   macro avg       0.90      0.90      0.90      1237
+weighted avg       0.90      0.90      0.90      1237
+
+Train Loss=0.5087 Acc=0.9771 | Val Loss=0.6923 Acc=0.9030 F1(w)=0.9031 F1(m)=0.8989
+
+=== Epoch 18/20 ===
+Train: 100%|█████████████████████████████| 155/155 [41:52<00:00, 16.21s/it, loss=0.7328, acc=0.9789]
+Val  : 100%|███████████████████████████████| 39/39 [06:13<00:00,  9.57s/it, loss=0.6788, acc=0.9046]
+
+Confusion Matrix:
+[[152  13   6   1   3   1   0]
+ [ 15 111  16   1   2   0   5]
+ [  4  18 155   2   1   1   2]
+ [  1   0   0 140   4   0   0]
+ [  0   0   2   8 168   3   0]
+ [  0   0   0   0   1 199   1]
+ [  0   3   4   0   0   0 194]]
+Class Corner_Kick Accuracy: 0.8636
+Class Free_Kick Accuracy: 0.7400
+Class Penalty_kick Accuracy: 0.8470
+Class Red_Card Accuracy: 0.9655
+Class Yellow_Card Accuracy: 0.9282
+Class substitute Accuracy: 0.9900
+Class tackle Accuracy: 0.9652
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.88      0.86      0.87       176
+   Free_Kick       0.77      0.74      0.75       150
+Penalty_kick       0.85      0.85      0.85       183
+    Red_Card       0.92      0.97      0.94       145
+ Yellow_Card       0.94      0.93      0.93       181
+  substitute       0.98      0.99      0.98       201
+      tackle       0.96      0.97      0.96       201
+
+    accuracy                           0.90      1237
+   macro avg       0.90      0.90      0.90      1237
+weighted avg       0.90      0.90      0.90      1237
+
+Train Loss=0.5064 Acc=0.9789 | Val Loss=0.6788 Acc=0.9046 F1(w)=0.9040 F1(m)=0.8992
+
+=== Epoch 19/20 ===
+Train: 100%|█████████████████████████████| 155/155 [41:00<00:00, 15.88s/it, loss=0.4730, acc=0.9791]
+Val  : 100%|███████████████████████████████| 39/39 [02:32<00:00,  3.91s/it, loss=0.6884, acc=0.9022]
+
+Confusion Matrix:
+[[155  12   4   1   2   1   1]
+ [ 15 116  13   1   1   0   4]
+ [  2  28 148   2   0   1   2]
+ [  1   0   0 140   4   0   0]
+ [  0   0   2   8 168   3   0]
+ [  0   0   1   0   1 199   0]
+ [  0   6   4   1   0   0 190]]
+Class Corner_Kick Accuracy: 0.8807
+Class Free_Kick Accuracy: 0.7733
+Class Penalty_kick Accuracy: 0.8087
+Class Red_Card Accuracy: 0.9655
+Class Yellow_Card Accuracy: 0.9282
+Class substitute Accuracy: 0.9900
+Class tackle Accuracy: 0.9453
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.90      0.88      0.89       176
+   Free_Kick       0.72      0.77      0.74       150
+Penalty_kick       0.86      0.81      0.83       183
+    Red_Card       0.92      0.97      0.94       145
+ Yellow_Card       0.95      0.93      0.94       181
+  substitute       0.98      0.99      0.98       201
+      tackle       0.96      0.95      0.95       201
+
+    accuracy                           0.90      1237
+   macro avg       0.90      0.90      0.90      1237
+weighted avg       0.90      0.90      0.90      1237
+
+Train Loss=0.4986 Acc=0.9791 | Val Loss=0.6884 Acc=0.9022 F1(w)=0.9026 F1(m)=0.8977
+
+=== Epoch 20/20 ===
+Train: 100%|█████████████████████████████| 155/155 [25:59<00:00, 10.06s/it, loss=0.4503, acc=0.9801]
+Val  : 100%|███████████████████████████████| 39/39 [02:28<00:00,  3.80s/it, loss=0.6827, acc=0.9062]
+
+Confusion Matrix:
+[[157  11   3   1   3   1   0]
+ [ 15 113  16   1   1   0   4]
+ [  4  20 154   2   0   1   2]
+ [  1   0   0 140   4   0   0]
+ [  0   0   2   8 168   3   0]
+ [  0   0   0   0   1 199   1]
+ [  0   5   5   1   0   0 190]]
+Class Corner_Kick Accuracy: 0.8920
+Class Free_Kick Accuracy: 0.7533
+Class Penalty_kick Accuracy: 0.8415
+Class Red_Card Accuracy: 0.9655
+Class Yellow_Card Accuracy: 0.9282
+Class substitute Accuracy: 0.9900
+Class tackle Accuracy: 0.9453
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ Corner_Kick       0.89      0.89      0.89       176
+   Free_Kick       0.76      0.75      0.76       150
+Penalty_kick       0.86      0.84      0.85       183
+    Red_Card       0.92      0.97      0.94       145
+ Yellow_Card       0.95      0.93      0.94       181
+  substitute       0.98      0.99      0.98       201
+      tackle       0.96      0.95      0.95       201
+
+    accuracy                           0.91      1237
+   macro avg       0.90      0.90      0.90      1237
+weighted avg       0.91      0.91      0.91      1237
+
+Train Loss=0.4965 Acc=0.9801 | Val Loss=0.6827 Acc=0.9062 F1(w)=0.9060 F1(m)=0.9014
+✅ New best F1(w)=0.9060 saved to weights\best_hybrid_resnet_vit.pth
+
+Training complete in 769.3 min. Best F1(w)=0.9060
+(football-events-env) PS C:\Users\T8635\Desktop\project3>
+
+
+
+
+
+
